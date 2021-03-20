@@ -80,7 +80,7 @@ def main():
     for the test set. It then displays the f1 score, precision and recall. 
     '''
     X, Y = load_data()
-    X_train, X_test, Y_train, Y_test = train_test_split(X, y)
+    X_train, X_test, Y_train, Y_test = train_test_split(X, Y)
 
     pipeline = Pipeline([
         ('vect', CountVectorizer(tokenizer=tokenize)),
