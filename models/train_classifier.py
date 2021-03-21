@@ -22,8 +22,8 @@ def load_data(database_filepath):
     This function loas data from SQL, i.e. sqlite and reads it into pandas DataFrame. 
     After laoding, it splits the dataframe into input and targets. 
     '''
-    engine = create_engine('sqlite:///messages.db')
-    df = pd.read_sql_table(database_filepath, engine)
+    engine = create_engine('sqlite:///'+ database_filepath)
+    df = pd.read_sql_table('df', engine)
     # drop target feature 'child_alone' since it only contains one class
     df = df.drop('child_alone', axis=1)
     # split into targets and feature

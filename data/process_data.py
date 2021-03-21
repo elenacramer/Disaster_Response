@@ -63,8 +63,8 @@ def save_data(df, database_filename):
     Output: 
         None
     '''
-    engine = create_engine('sqlite:///messages.db')
-    df.to_sql(database_filename, engine, if_exists='replace', index=False)
+    engine = create_engine('sqlite:///'+ database_filename)
+    df.to_sql('df', engine, if_exists='replace', index=False)
 
 
 def main():
