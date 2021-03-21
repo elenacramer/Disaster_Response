@@ -16,6 +16,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer 
 from sklearn.metrics import f1_score, precision_score, recall_score
+from sklearn.model_selection import GridSearchCV
 
 def load_data(database_filepath):
     '''
@@ -63,7 +64,24 @@ def build_model():
         ('tfidf', TfidfTransformer()),
         ('mclf', MultiOutputClassifier(RandomForestClassifier()))
     ])
-    return pipeline 
+
+    # fitting the model was interrupted because it took longer then 4.5 hours and was still not finished
+    parameters = {
+        'vect__max_df': (0.5, 0.75, 1.0),
+        'vect__max_features': (None, 5000),
+        'tfidf__use_idf': (True, False),
+        'mclf__estimator__n_estimators': [10, 50, 100],
+        'mclf__estimator__bootstrap': [True, False]
+    }
+
+    # tried fewer paramters 
+    parameters2 = {
+        'vect__max_df': (0.5, 1.0),
+        'mclf__estimator__n_estimators': [10, 100],
+    } 
+
+    model = GridSearchCV(pipeline_rf, param_grid=parameters2)
+    return model 
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
@@ -76,16 +94,15 @@ def evaluate_model(model, X_test, Y_test, category_names):
        Outputs:
             None
     '''
-    Y_pred = model.predict(X_test)
     # Create datafram of Y_pred which is a np.array
-    Y_pred_frame = pd.DataFrame(Y_pred, columns = category_names)
-    # Create a dataframe to store scores
+    Y_pred_frame = pd.DataFrame(Y_pred, columns=category_names)
+
     result_mclf = pd.DataFrame()
     f1 = []
     precision = []
     recall = []
-    # compute scores for each  target feature
-    for target in category_names:
+
+    for target in  category_names:
         f1.append(f1_score(Y_test[target], Y_pred_frame[target], average='macro'))
         precision.append(precision_score(Y_test[target], Y_pred_frame[target], average='macro'))
         recall.append(recall_score(Y_test[target], Y_pred_frame[target], average='macro'))
@@ -93,8 +110,9 @@ def evaluate_model(model, X_test, Y_test, category_names):
     result_mclf["f1"] = f1
     result_mclf["precision"] = precision
     result_mclf["recall"] = recall
+    result_mclf['classes'] = result_mclf.index
 
-    print(result_mclf.mean())
+    return result_mclf
 
 
 def save_model(model, model_filepath):
