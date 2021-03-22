@@ -1,6 +1,5 @@
 # Disaster Response Pipeline Project
 
-### Introduction
 The dataset that we'll be working on consists of natural disaster messages that are classified into 36 different classes. 
 The dataset was provided by [Figure Eight](https://appen.com/). Example of input messages:
 ```
