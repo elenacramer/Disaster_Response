@@ -80,7 +80,7 @@ def build_model():
         'mclf__estimator__n_estimators': [10, 100],
     } 
 
-    model = GridSearchCV(pipeline_rf, param_grid=parameters2)
+    model = GridSearchCV(pipeline, param_grid=parameters2)
     return model 
 
 
@@ -94,9 +94,11 @@ def evaluate_model(model, X_test, Y_test, category_names):
        Outputs:
             None
     '''
+    # predict 
+    Y_pred = model.predict(X_test)
     # Create datafram of Y_pred which is a np.array
-    Y_pred_frame = pd.DataFrame(Y_pred, columns=category_names)
-
+    Y_pred_frame = pd.DataFrame(Y_pred, columns = category_names)
+    # Create a dataframe to store scores
     result_mclf = pd.DataFrame()
     f1 = []
     precision = []
