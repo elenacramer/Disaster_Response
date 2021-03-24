@@ -15,8 +15,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.pipeline import Pipeline
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer 
-from sklearn.metrics import f1_score, precision_score, recall_score
-from sklearn.model_selection import GridSearchCV
+from sklearn.metrics import f1_score, precision_score, recall_score, classification_report
 
 def load_data(database_filepath):
     '''
@@ -81,7 +80,7 @@ def build_model():
     } 
 
     model = GridSearchCV(pipeline, param_grid=parameters2)
-    return model 
+    return model
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
@@ -94,7 +93,6 @@ def evaluate_model(model, X_test, Y_test, category_names):
        Outputs:
             None
     '''
-    # predict 
     Y_pred = model.predict(X_test)
     # Create datafram of Y_pred which is a np.array
     Y_pred_frame = pd.DataFrame(Y_pred, columns = category_names)
@@ -103,18 +101,20 @@ def evaluate_model(model, X_test, Y_test, category_names):
     f1 = []
     precision = []
     recall = []
-
-    for target in  category_names:
+    # compute scores for each  target feature
+    for target in category_names:
+        print(f'{target} accuracy \n')
         f1.append(f1_score(Y_test[target], Y_pred_frame[target], average='macro'))
         precision.append(precision_score(Y_test[target], Y_pred_frame[target], average='macro'))
         recall.append(recall_score(Y_test[target], Y_pred_frame[target], average='macro'))
+        print(classification_report(Y_test[target], Y_pred_frame[target]))
 
     result_mclf["f1"] = f1
     result_mclf["precision"] = precision
     result_mclf["recall"] = recall
     result_mclf['classes'] = result_mclf.index
 
-    return result_mclf
+    print('Overall Mean: \n', result_mclf.mean())
 
 
 def save_model(model, model_filepath):

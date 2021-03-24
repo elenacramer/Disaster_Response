@@ -49,7 +49,8 @@ def clean_data(df):
     # concatenate the original dataframe with the new `categories` dataframe
     for col in categories.columns:
         df[col] = categories[col]
-
+    # column related has threee labels, drop the third one
+    df = df[df.related != 2]
     # drop duplicates and return dataframe
     return df.drop_duplicates() 
 
